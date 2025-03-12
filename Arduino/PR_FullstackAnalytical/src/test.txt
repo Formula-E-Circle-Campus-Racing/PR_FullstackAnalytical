@@ -1,0 +1,27 @@
+// testing code from 3-11-25
+
+#include <Arduino.h>
+
+#define JOYSTICK_SW 11
+#define JOYSTICK_X A0
+#define JOYSTICK_Y A1
+
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.println("Hello World");
+  pinMode(JOYSTICK_SW, INPUT_PULLUP);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  Serial.print("X: ");
+  Serial.print(analogRead(JOYSTICK_X));
+  Serial.print(" Y: ");
+  Serial.print(analogRead(JOYSTICK_Y));
+  Serial.print(" SW: ");
+  Serial.println(digitalRead(JOYSTICK_SW));
+  delay(200); 
+}
