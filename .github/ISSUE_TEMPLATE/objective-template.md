@@ -7,14 +7,19 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+# Lorem Ipsum
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## Objective:
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+Add some Lorem _(For example, in all placeholders.)_ In this case, in this md file.
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+***
+
+## Requirements:
+
+1) **Dynamic Lorem:**
+- Has a function called `getLorem` that returns `char*` and takes in a variable amount of agruments (something like [this would be nice](https://learn.microsoft.com/en-us/cpp/cpp/functions-with-variable-argument-lists-cpp?view=msvc-170)). **If this isn't possible, just have no arguments**
+
+***Additional Context/Flags***
+
+_Pls DM me if you have any questions!!!!_
