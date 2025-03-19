@@ -18,7 +18,8 @@ Add some Lorem _(For example, in all placeholders.)_ In this case, in this md fi
 ## Requirements:
 
 1) **Dynamic Lorem:**
-- Has a function called `getLorem` that returns `char*` and takes in a variable amount of agruments (something like [this would be nice](https://learn.microsoft.com/en-us/cpp/cpp/functions-with-variable-argument-lists-cpp?view=msvc-170)). **If this isn't possible, just have no arguments**
+    - Has a function called `getLorem` that returns `char*` and takes in a variable amount of agruments (something like [this would be nice](https://learn.microsoft.com/en-us/cpp/cpp/functions-with-variable-argument-lists-cpp?view=msvc-170)). **If this isn't possible, just have no arguments**
+    - Do not add static lorem!!
 
 ***Additional Context/Flags***
 
