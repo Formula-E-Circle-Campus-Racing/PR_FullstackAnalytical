@@ -1,7 +1,7 @@
 ---
 name: Objective Template
 about: A template for an objective!
-title: Lorem Ipsum
+title: 
 labels: ''
 assignees: ''
 
