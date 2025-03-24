@@ -16,17 +16,21 @@ SYSTEM_THREAD(ENABLED);
 // View logs with CLI using 'particle serial monitor --follow'
 SerialLogHandler logHandler(LOG_LEVEL_INFO);
 
+void requestData();
+
+
+
 // setup() runs once, when the device is first turned on
 void setup() {
   Serial.begin(9600);
-  Wire.begin(4);
+  Wire.begin();
 }
 
 // JSON Buffer
 char buffer[256];
 
 // Raw Data Buffer
-char rawDataBuffer[10];
+char rawDataBuffer[11];
 
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
@@ -39,14 +43,18 @@ void loop() {
 // Test this[]
 void requestData(){
   // request for information from the peripheral
-  Wire.requestFrom(4, 6);
+  Wire.requestFrom(4, 10);
 
-  short j = 0;
+  u_int8_t j = 0;
   while (Wire.available()) {
     // read the data from the peripheral
     rawDataBuffer[j] = Wire.read();
+    Log.info("Data: %c", rawDataBuffer[j]);
+    Log.info("DataNum: %d", rawDataBuffer[j]);
     j++;
   }
+
+  rawDataBuffer[10] = '\0'; // null terminate the string
 
   // debug raw data
   Log.info("Data: %s", rawDataBuffer);
