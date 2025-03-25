@@ -37,6 +37,7 @@ void setup() {
 void loop() {
   // beg for data
   requestData();
+  pubData();
   delay(4000);  
 }
 
@@ -52,8 +53,8 @@ void requestData(){
     rawDataBuffer[j] = Wire.read();
     
     // Debugging
-    Log.info("Data: %c", rawDataBuffer[j]);
-    Log.info("DataNum: %d", rawDataBuffer[j]);
+    // Log.info("Data: %c", rawDataBuffer[j]);
+    // Log.info("DataNum: %d", rawDataBuffer[j]);
 
     // Increment the index
     j++;
@@ -68,9 +69,15 @@ void requestData(){
 }
 
 void pubData(){
+  // :: check if data exists ::
+  if(strlen(rawDataBuffer) == 0){
+    Log.warn("No data to publish!");
+    return;
+  }
+  
   // :: check if connected to the cloud ::
   if(Particle.connected() == false){
-    Log.info("Not connected to the cloud!");
+    Log.warn("Not connected to the cloud!");
     return;
   }
 
@@ -91,7 +98,6 @@ void pubData(){
 
   // :: publish the data ::
   Particle.publish("blah", buffer);
-  Log.info("Published: %s", buffer);
 }
 
 

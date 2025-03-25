@@ -1,15 +1,14 @@
 #include <stdlib.h>
 #include "ByteConvert.h"
 #include <inttypes.h>
+#include <cstring>
 
-// :: not using this for now! :: 
-// union FloatToBytes
-// {
-//   uint8_t bytes[sizeof(float)]; // 8 * 4 = 32 bytes
-//   float floatValue;
-// };
-
-// FloatToBytes floatConverter;
+// :: Converts bytes to ints :: 
+union CharToInt
+{
+  char bytes[2];
+  int intValue;
+} shortConverter;
 
 /**
  * @brief Converts a char* to a boolean
@@ -18,7 +17,7 @@
  * @return bool
  */
 bool ByteConvert::toBool(char* data){
-    return (bool)atoi(data);
+    return data[0] != 0; // keep an eye on this... (false is 255)
 }
 
 /**
@@ -28,7 +27,10 @@ bool ByteConvert::toBool(char* data){
  * @return uint16_t
  */
 uint16_t ByteConvert::toUShort(char* data){
-    return (uint16_t)atoi(data);
+    // cpy it in reverse order
+    shortConverter.bytes[0] = data[1];
+    shortConverter.bytes[1] = data[0];
+    return (uint16_t)shortConverter.intValue;
 }
 
 /**
@@ -38,5 +40,5 @@ uint16_t ByteConvert::toUShort(char* data){
  * @return double
  */
 double ByteConvert::toDouble(char* data){
-    return (double)atof(data);
+    return 0.0;
 }
