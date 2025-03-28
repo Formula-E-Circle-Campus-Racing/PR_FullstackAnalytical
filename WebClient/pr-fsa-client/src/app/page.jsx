@@ -3,18 +3,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const getRecordData = async(queryObj, useStateUpdater, setError) => {
+const getRecordData = async (queryObj, useStateUpdater, setError) => {
   // validate the query object
-  if(queryObj.baseUrl == null) {
+  if (queryObj.baseUrl === "not a url") {
     // The base URL is null when the user first loads.
     return;
   }
 
-  if(queryObj.baseUrl  === "") {
+  if (!queryObj.baseUrl) {
     setError("Base URL is required!");
     return;
   }
-  
+
+
   // make URL to fetch data
   const apiURL = queryObj.baseUrl; // for now.
   console.log(apiURL);
@@ -24,6 +25,8 @@ const getRecordData = async(queryObj, useStateUpdater, setError) => {
     setError('');
     useStateUpdater(res.data);
   }).catch((err) => {
+    useStateUpdater(null);
+    console.log(err);
     setError(err);
   });
 }
@@ -37,13 +40,13 @@ export default function Home() {
 
   // query object for making API requests
   let [queryObj, setQueryObj] = useState({
-    baseUrl: "", // random garbage to stop queries
+    baseUrl: "not a url", // random garbage to stop queries
     limit: 5,
     beginDate: "1-5-25",
     endDate: "1-12-25",
     liveUpdate: false // Feature needs to be implemented before actual usage.
   });
-  
+
   // record data (data to analyze)
   const [recordData, setRecordData] = useState(null);
 
@@ -63,18 +66,19 @@ export default function Home() {
       <h1 className="text-3xl font-bold underline">Get data</h1>
       <div>
         {/* Get a URL and send it */}
-        <input className="border-red-400 border-2 rounded-lg" placeholder="URL to DB API goes here" onChange={e => setQueryObj({baseUrl: e.target.value})}/>
-        <input type="checkbox" value="blah blah blah"/>
+        <input className="border-red-400 border-2 rounded-lg" placeholder="URL to DB API goes here" onChange={e => setQueryObj({ baseUrl: e.target.value })} />
+        <input type="checkbox" value="blah blah blah" />
 
         <button className="ml-3 b-5" onClick={() => setRefresh(!refresh)}>Refresh</button>
         <div>
           <h1>Data:</h1>
-          {error && <p className="text-red-500">{error}</p>}
-          {recordData && <pre>{JSON.stringify(recordData.data, null, 2)}</pre>}
-          {!recordData && !error && <p>No data yet.</p>}
+          {error && <p className="text-red-500 mb-4">{error.code + ": " +error.message}</p>}
+          
+          <pre>
+            {JSON.stringify(recordData.data, null, 2)}
+          </pre>
         </div>
-        </div>   
+      </div>
     </div>
   );
 }
-
