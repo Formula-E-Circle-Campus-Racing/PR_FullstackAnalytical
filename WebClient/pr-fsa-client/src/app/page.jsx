@@ -37,7 +37,7 @@ export default function Home() {
 
   // query object for making API requests
   let [queryObj, setQueryObj] = useState({
-    baseUrl: null, // random garbage to stop queries
+    baseUrl: "", // random garbage to stop queries
     limit: 5,
     beginDate: "1-5-25",
     endDate: "1-12-25",
@@ -59,14 +59,14 @@ export default function Home() {
 
   return (
     <div>
-      
+      {/* https://react.dev/reference/react-dom/components/input */}
       <h1 className="text-3xl font-bold underline">Get data</h1>
       <div>
         {/* Get a URL and send it */}
-        <input placeholder="www.google.com" onChange={e => setQueryObj({baseUrl: e.target.value})}/>
+        <input className="border-red-400 border-2 rounded-lg" placeholder="URL to DB API goes here" onChange={e => setQueryObj({baseUrl: e.target.value})}/>
         <input type="checkbox" value="blah blah blah"/>
 
-        <button className="b-5" onClick={() => setRefresh(!refresh)}>Refresh</button>
+        <button className="ml-3 b-5" onClick={() => setRefresh(!refresh)}>Refresh</button>
         <div>
           <h1>Data:</h1>
           {error && <p className="text-red-500">{error}</p>}
