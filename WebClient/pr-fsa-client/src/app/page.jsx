@@ -13,8 +13,10 @@ const getRecordData = async (apiURL, useStateUpdater, setError) => {
   // reset error
   setError('');
 
+  console.log("Going...");
   // make the API request
   axios.get(apiURL).then((res) => {
+    console.log("Data received: ", res.data);
     useStateUpdater(res.data);
   }).catch((err) => {
     useStateUpdater(null);
@@ -42,9 +44,6 @@ export default function Home() {
   // record data (data to analyze)
   const [recordData, setRecordData] = useState(null);
 
-  // to refresh data
-  const [refresh, setRefresh] = useState(false);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitting form...");
@@ -56,16 +55,19 @@ export default function Home() {
     }
     else {
       // build the the apiURL from form data
+      apiURL = e.target[2].value; // base URL
 
-      // for now, we'll have static keys
-      // but later we'll have dynamic ones []
-      for (let i = 0; i < e.target.length; i++) {
-        if (e.target[i].type !== "checkbox") {
-          const key = e.target[i].value;
-          console.log(key);
-        }
+      // get every "key" and append it to the base URL
+      for (let i = 3; i < e.target.length; i++) {
+          apiURL += e.target[i].name + "=" + e.target[i].value + "&";
       }
-      return;
+
+      apiURL = apiURL.substring(0, apiURL.length - 1); // remove the last '&'
+
+      // apiURL[apiURL.length - 1] = ""; // remove the last '&'
+      // apiURL.at(apiURL.length - 1) = ""; // remove the last '&'
+      console.log("apiURL: " + apiURL);
+      // return;
     }
 
     getRecordData(apiURL, setRecordData, setError);
@@ -112,7 +114,7 @@ const DataQueryUI = () => {
     <>
       <div className="mb-4">
         <label className="text-lg font-bold">Static URL</label>
-        <input type="url" required="true" disabled={dataMethod} className="border-red-400 border-2 rounded-lg disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500" placeholder="URL to DB API goes here" />
+        <input type="url" required={true} disabled={dataMethod} className="border-red-400 border-2 rounded-lg disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500" placeholder="URL to DB API goes here" />
       </div>
       <div>
         <label className="text-lg font-bold">Use Edtior instead </label>
@@ -120,22 +122,22 @@ const DataQueryUI = () => {
         <input type="checkbox" onClick={(e) => { (e.target.checked) ? setDataMethod(1) : setDataMethod(0) }} />
         <div>
           {/* issue with URL or 'required' checking not working. */}
-          <label type="url" required="true" className="">Base URL</label>
-          <input className="border-red-400 border-2 rounded-lg" placeholder="base URL to DB API goes here" />
+          <label type="url"  required={true} className="">Base URL</label>
+          <input name="baseUrl" className="border-red-400 border-2 rounded-lg" placeholder="base URL to DB API goes here" />
         </div>
         <div className="mt-4">
           {/* For now, have static keys, and later have dynamic ones */}
           <div>
-            <label className="">Data Limit</label>
-            <input type="number" className="border-red-400 border-2 rounded-lg" placeholder="" />
+            <label for="limit">Data Limit</label>
+            <input id="limit" name="limit" type="number" className="border-red-400 border-2 rounded-lg" placeholder="" />
           </div>
           <div>
             <label className="">Begin Date</label>
-            <input type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
+            <input name="beginDate" type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
           </div>
           <div>
             <label className="">End Date</label>
-            <input type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
+            <input name="endDate" type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
           </div>
           <div>
             <label className="">Live Update</label>
