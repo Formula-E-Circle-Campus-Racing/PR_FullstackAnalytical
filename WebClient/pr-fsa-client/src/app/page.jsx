@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios, { isAxiosError } from "axios";
 
 const getRecordData = async (apiURL, useStateUpdater, setError) => {
@@ -25,21 +25,22 @@ const getRecordData = async (apiURL, useStateUpdater, setError) => {
   });
 }
 
+
+
 export default function Home() {
+
+  // NOTE
+  // Needs a useTransition hook to handle the loading state for data presentation pieecs
+  // (https://react.dev/reference/react/useTransition)
+
+  // also take a look at this:
+  // https://react.dev/reference/react/useActionState
+
 
   // :: Get Data ::
 
   // error system (verboser)
   let [error, setError] = useState(null);
-
-  // Old.
-  // const queryTemplate = {
-  //   baseUrl: "https://api.example.com/data",
-  //   limit: 0,
-  //   beginDate: "",
-  //   endDate: "",
-  //   liveUpdate: false
-  // }
 
   // record data (data to analyze)
   const [recordData, setRecordData] = useState(null);
@@ -56,17 +57,31 @@ export default function Home() {
     else {
       // build the the apiURL from form data
       apiURL = e.target[2].value; // base URL
+      // console.log("e", e);
 
-      // get every "key" and append it to the base URL
-      for (let i = 3; i < e.target.length; i++) {
-          apiURL += e.target[i].name + "=" + e.target[i].value + "&";
+      // would've been nice if we havd a better data structure ;-;
+      
+      // loop through the form data starting from the first parameter key
+      // structure:
+      // - Checkbox for inclusion
+      // - Parameter name
+      // - Parameter value
+      // the first parameter starts at i = 3 (the checkbox)
+      for(let i = 3; i < e.target.length - 3; i += 3) {
+        // check if the checkbox is checked
+        // console.log(e.target[i].checked);
+        if (e.target[i].checked && e.target[i + 1].value) {
+          // get the parameter name and value
+          let paramName = e.target[i + 1].value;
+          let paramValue = e.target[i + 2].value;
+
+          // add the parameter to the apiURL
+          apiURL += "&" + paramName + "=" + paramValue;
+        }
       }
 
       apiURL = apiURL.substring(0, apiURL.length - 1); // remove the last '&'
-
-      // apiURL[apiURL.length - 1] = ""; // remove the last '&'
-      // apiURL.at(apiURL.length - 1) = ""; // remove the last '&'
-      console.log("apiURL: " + apiURL);
+      // console.log("apiURL: " + apiURL);
       // return;
     }
 
@@ -110,6 +125,30 @@ const DataQueryUI = () => {
   // (if it is checked, then just use the static URL)
   const [dataMethod, setDataMethod] = useState(0);
 
+  const [paramItems, setParamItems] = useState([
+    // default parameters
+    {
+      param: "limit",
+      type: "number",
+      value: 0
+    },
+    {
+      param: "beginDate",
+      type: "date",
+    },
+    {
+      param: "endDate",
+      type: "date",
+    }
+  ]);
+
+  let paramDiv = useRef(null);
+
+  function handleAddition(){
+    // add a new parameter to the list
+    setParamItems([...paramItems, { param: "", type: "text" }]);
+  }
+
   return (
     <>
       <div className="mb-4">
@@ -119,33 +158,49 @@ const DataQueryUI = () => {
       <div>
         <label className="text-lg font-bold">Use Edtior instead </label>
         {/* Set  */}
-        <input type="checkbox" onClick={(e) => { (e.target.checked) ? setDataMethod(1) : setDataMethod(0) }} />
-        <div>
+        <input type="checkbox" onClick={(e) => { setDataMethod(!dataMethod) }} />
+        <div hidden={!dataMethod}>
           {/* issue with URL or 'required' checking not working. */}
-          <label type="url"  required={true} className="">Base URL</label>
+          <label type="url" required={true} className="">Base URL</label>
           <input name="baseUrl" className="border-red-400 border-2 rounded-lg" placeholder="base URL to DB API goes here" />
         </div>
-        <div className="mt-4">
-          {/* For now, have static keys, and later have dynamic ones */}
-          <div>
-            <label for="limit">Data Limit</label>
-            <input id="limit" name="limit" type="number" className="border-red-400 border-2 rounded-lg" placeholder="" />
-          </div>
-          <div>
-            <label className="">Begin Date</label>
-            <input name="beginDate" type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
-          </div>
-          <div>
-            <label className="">End Date</label>
-            <input name="endDate" type="date" className="border-red-400 border-2 rounded-lg" placeholder="" />
-          </div>
-          <div>
-            <label className="">Live Update</label>
-            <input type="checkbox" className="border-red-400 border-2 rounded-lg" placeholder="" />
-          </div>
+        <div hidden={!dataMethod} className="mt-4" ref={paramDiv}>
+          {/* add template keys */}
+          {paramItems.map((value, key) => {
+            return (
+              <FormPars key={key} param={value.param} type={value.type} />
+            )
+          }
+          )}
+          {/* user-defined keys () */}
+          <div className="mt-4 ml-3 b-5 bg-green-400 p-2 rounded-lg active:bg-green-600" onClick={handleAddition}>Add Key</div>
+
         </div>
       </div>
       <button className="mt-1 ml-3 b-5 bg-green-400 p-2 rounded-lg active:bg-green-600">Get Data</button>
     </>
   )
+}
+
+// >> adjustable keys (can be deleted, added, or made optional)
+const FormPars = (props) => {
+  // needs:
+  // - key
+  // - param name
+  // - (optional) type
+
+  const [param, setParam] = useState((props.param) ? props.param : "");
+  const [includeStatus, setIncludeStatus] = useState(1);
+  return (
+    <div className="mt-4">
+      {/* 
+          - If checked, include this in APIURL
+          - Otherwise, disable it.
+        */}
+      <input name="include" type="checkbox" className="border-red-400 border-2 rounded-lg " placeholder="" onChange={(e) => { setIncludeStatus(!includeStatus) } } checked={includeStatus}/>
+      <input disabled={!includeStatus} name="param" type="text" className="border-red-400 border-2 rounded-lg disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500" placeholder={"Parameter Name"} value={param} onChange={(e) => setParam(e.target.value)} />
+      <input disabled={!includeStatus} name={param} type={(props.type) ? props.type : "text"} className="border-red-400 border-2 rounded-lg disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500" placeholder="" />
+    </div>
+  )
+
 }
