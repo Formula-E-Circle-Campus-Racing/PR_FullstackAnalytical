@@ -86,9 +86,9 @@ void pubData(){
   doc.clear();
   
   // populate the doc
-  doc["shortOne"] = ByteConvert::toUShort(getSubstring(rawDataBuffer, 0, 2));
-  doc["shortTwo"] = ByteConvert::toUShort(getSubstring(rawDataBuffer, 2, 4));
-  doc["boolOne"] = ByteConvert::toBool(&(rawDataBuffer[4])); // since we access the arr, just return its address
+  doc["yAxis"] = ByteConvert::toUShort(getSubstring(rawDataBuffer, 0, 2));
+  doc["xAxis"] = ByteConvert::toUShort(getSubstring(rawDataBuffer, 2, 4));
+  doc["isPressed"] = ByteConvert::toBool(&(rawDataBuffer[4])); // since we access the arr, just return its address
   
   // For debugging purposes
   doc["rawData"] = rawDataBuffer;
@@ -97,7 +97,7 @@ void pubData(){
   serializeJson(doc, buffer);
 
   // :: publish the data ::
-  Particle.publish("blah", buffer);
+  Particle.publish("envInfo", buffer);
 }
 
 
