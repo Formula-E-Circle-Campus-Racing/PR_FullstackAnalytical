@@ -13,6 +13,6 @@ class ByteConvert{
     public:
         static bool toBool(char* data);
         static uint16_t toUShort(char* data);
-        static double toDouble(char* data);
+        static double toDouble(char* data, u_int8_t multiplier);
 };
 #endif
